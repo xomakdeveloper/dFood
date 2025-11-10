@@ -1,0 +1,9 @@
+name: dFood
+version: '1.0'
+main: xyz.xomakdev.dFood.dFood
+api-version: '1.21'
+prefix: dFood
+load: STARTUP
+authors: [xomakdev]
+description: Плагин позволяющий накидывать эффекты зельй на еду
+website: t.me/xomakdev_info
