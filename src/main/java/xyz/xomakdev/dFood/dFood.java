@@ -9,6 +9,7 @@ public final class dFood extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
         instance = this;
     }
 
