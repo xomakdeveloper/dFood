@@ -2,14 +2,14 @@ package xyz.xomakdev.dFood.listeners;
 
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import xyz.xomakdev.dFood.dFood;
@@ -28,76 +28,78 @@ public class PotionListener implements Listener {
     private final dFood plugin = dFood.getInstance();
 
     @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+    public void onProjectileHit(ProjectileHitEvent event) {
+        if (!(event.getEntity() instanceof ThrownPotion)) {
             return;
         }
 
-        ItemStack item = event.getItem();
-        if (item == null) return;
+        ThrownPotion potion = (ThrownPotion) event.getEntity();
+        Item nearestFoodItem = findNearestFoodItem(potion);
 
-        if (isSplashPotion(item)) {
-            event.setCancelled(true);
-            applyPotionEffectsToHeldItem(event.getPlayer(), item);
-        } else if (isFood(item)) {
-            event.setCancelled(true);
-            consumeFoodWithEffects(event.getPlayer(), item);
-        }
-    }
-
-    private boolean isSplashPotion(ItemStack item) {
-        return item.getType() == Material.SPLASH_POTION || item.getType() == Material.LINGERING_POTION;
-    }
-
-    private boolean isFood(ItemStack item) {
-        return item.getType().isEdible() && NBTUtil.hasPotionEffects(item);
-    }
-
-    private void applyPotionEffectsToHeldItem(Player player, ItemStack potion) {
-        ItemStack mainHand = player.getInventory().getItemInMainHand();
-        ItemStack offHand = player.getInventory().getItemInOffHand();
-
-        ItemStack targetItem = null;
-
-        if (mainHand.getType().isEdible()) {
-            targetItem = mainHand;
-        } else if (offHand.getType().isEdible()) {
-            targetItem = offHand;
-        }
-
-        if (targetItem == null) {
+        if (nearestFoodItem == null) {
             return;
         }
 
-        PotionMeta potionMeta = (PotionMeta) potion.getItemMeta();
-        if (potionMeta == null) return;
+        ItemStack foodStack = nearestFoodItem.getItemStack();
+        if (!foodStack.getType().isEdible()) {
+            return;
+        }
 
-        List<PotionEffect> effects = new ArrayList<>(potionMeta.getCustomEffects());
+        List<PotionEffect> effects = new ArrayList<>(potion.getEffects());
 
-        if (effects.isEmpty()) {
-            PotionEffectType baseEffect = potionMeta.getBasePotionType().getEffectType();
+        if (effects.isEmpty() && potion.getPotionMeta() != null) {
+            PotionEffectType baseEffect = potion.getPotionMeta().getBasePotionType().getEffectType();
             if (baseEffect != null) {
                 effects.add(new PotionEffect(baseEffect, 3600, 0));
             }
         }
 
-        if (!effects.isEmpty()) {
-            List<PotionEffect> allowedEffects = PotionEffectListener.filterAllowedEffects(effects, targetItem.getType());
+        if (effects.isEmpty()) {
+            return;
+        }
 
-            for (PotionEffect effect : effects) {
-                if (!allowedEffects.contains(effect)) {
-                    String effectName = PotionEffectListener.getEffectDisplayName(effect.getType());
-                    player.sendMessage(ConfigurationUtil.mm(ConfigurationUtil.getString("messages.errors.effect_disallowed")
-                            .replace("%effect%", effectName)));
-                }
+        List<PotionEffect> allowedEffects = PotionEffectListener.filterAllowedEffects(effects, foodStack.getType());
+
+        if (!allowedEffects.isEmpty()) {
+            addEffectsToFood(foodStack, allowedEffects);
+            nearestFoodItem.setItemStack(foodStack);
+            potion.remove();
+        }
+    }
+
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        if (event.getItem() == null || !event.getItem().getType().isEdible()) {
+            return;
+        }
+
+        ItemStack food = event.getItem();
+        if (!NBTUtil.hasPotionEffects(food)) {
+            return;
+        }
+
+        event.setCancelled(true);
+        consumeFoodWithEffects(event.getPlayer(), food);
+    }
+
+    private Item findNearestFoodItem(ThrownPotion potion) {
+        double maxRadius = ConfigurationUtil.getDouble("settings.max_potion_radius", 3.0);
+        Item nearestItem = null;
+        double nearestDistance = Double.MAX_VALUE;
+
+        for (Item item : potion.getWorld().getEntitiesByClass(Item.class)) {
+            if (!item.getItemStack().getType().isEdible()) {
+                continue;
             }
 
-            if (!allowedEffects.isEmpty()) {
-                addEffectsToFood(targetItem, allowedEffects);
-                player.getInventory().removeItem(potion);
-                player.swingMainHand();
+            double distance = item.getLocation().distance(potion.getLocation());
+            if (distance <= maxRadius && distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestItem = item;
             }
         }
+
+        return nearestItem;
     }
 
     private void addEffectsToFood(ItemStack food, List<PotionEffect> effects) {
@@ -125,7 +127,7 @@ public class PotionListener implements Listener {
         food.setItemMeta(meta);
     }
 
-    private void consumeFoodWithEffects(Player player, ItemStack food) {
+    private void consumeFoodWithEffects(org.bukkit.entity.Player player, ItemStack food) {
         if (player.getFoodLevel() >= 20 && !player.hasPermission("dfood.override.full")) {
             return;
         }
@@ -139,7 +141,7 @@ public class PotionListener implements Listener {
         consumeFoodItem(player, food);
     }
 
-    private void applyEffectsToPlayer(Player player, List<PotionEffect> effects, ItemStack food) {
+    private void applyEffectsToPlayer(org.bukkit.entity.Player player, List<PotionEffect> effects, ItemStack food) {
         boolean disableNotification = ConfigurationUtil.getBoolean("messages.added.disable_notification");
         boolean disableStart = ConfigurationUtil.getBoolean("messages.added.disable_start");
 
@@ -172,7 +174,7 @@ public class PotionListener implements Listener {
         }
     }
 
-    private void consumeFoodItem(Player player, ItemStack food) {
+    private void consumeFoodItem(org.bukkit.entity.Player player, ItemStack food) {
         if (food.getAmount() > 1) {
             food.setAmount(food.getAmount() - 1);
         } else {

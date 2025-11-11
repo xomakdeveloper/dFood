@@ -1,4 +1,6 @@
 prefix: "<white>dFood »"
+settings:
+  max_potion_radius: 3.0
 refactor:
   potion_list:
     ref_level: "<gray>Эффект<blue>: <white>%effect% <blue>%level%<white> Уровня. <gray>(%duration%)"
@@ -25,9 +27,7 @@ messages:
     - " <green>› <gray>Версия: <white>{projectVersion}"
     - " <green>› <gray>Автор: <white>{projectAuthors}"
     - " <gray>Сделано с <red>Любовью<gray> Для вас."
-  errors:
-    effect_disallowed: "%prefix% <red>Эффект %effect% запрещен для этой еды!"
-    global_disallowed: "%prefix% <red>Эффект %effect% запрещен глобально!"
+
 effects:
   disallowed:
     global:
