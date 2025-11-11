@@ -1,5 +1,45 @@
 prefix: "<white>dFood »"
+refactor:
+  potion_list:
+    ref_level: "<gray>Эффект<blue>: <white>%effect% <blue>%level%<white> Уровня. <gray>(%duration%)"
+    ref: "<gray>Эффект<blue>: <white>%effect% <gray>(%duration%)"
+    rome_math: true
+    ref_duration: "MM:SS"
+messages:
+  added:
+    ref_level: "<white>%effect% <blue>%level%<white> Уровня. <gray>(%duration%)"
+    ref: "<white>%effect% <gray>(%duration%)"
+    start_text: "<white>Вы съели <light_purple>%food% <white>:"
+    added_text: "<reset> <white>› Добавлено<blue>: %effect_ref%"
+    disable_start: false
+    disable_notification: false
+  reload: "%prefix% <green>Конфиг перезагружен!"
+  help:
+    - "%prefix% <gray>Команды:"
+    - "<white>/df reload <gray>- Перезагрузить"
+    - "<white>/df help <gray>- Помощь"
+    - "<white>/df version <gray>- Версия"
+  version:
+    - "%prefix% <gray>О плагине:"
+    - " <green>› <gray>Название: <white>{projectName}"
+    - " <green>› <gray>Версия: <white>{projectVersion}"
+    - " <green>› <gray>Автор: <white>{projectAuthors}"
+    - " <gray>Сделано с <red>Любовью<gray> Для вас."
+  errors:
+    effect_disallowed: "%prefix% <red>Эффект %effect% запрещен для этой еды!"
+    global_disallowed: "%prefix% <red>Эффект %effect% запрещен глобально!"
 effects:
+  disallowed:
+    global:
+      - INSTANT_DAMAGE
+      - BAD_OMEN
+    food:
+      GOLDEN_APPLE:
+        disallowed:
+          - INSTANT_DAMAGE
+          - NAUSEA
+          - BLINDNESS
+
   names:
     SPEED: "Скорость"
     SLOWNESS: "Замедление"
@@ -34,42 +74,3 @@ effects:
     BAD_OMEN: "Дурное предзнаменование"
     HERO_OF_THE_VILLAGE: "Герой деревни"
     DARKNESS: "Темнота"
-  disallowed:
-    global:
-      - INSTANT_DAMAGE
-      - BAD_OMEN
-    food:
-      GOLDEN_APPLE:
-        disallowed:
-          - INSTANT_DAMAGE
-          - NAUSEA
-          - BLINDNESS
-refactor:
-  potion_list:
-    ref_level: "<gray>Эффект<blue>: <white>%effect% <blue>%level%<white> Уровня. <gray>(%duration%)"
-    ref: "<gray>Эффект<blue>: <white>%effect% <gray>(%duration%)"
-    rome_math: true
-    ref_duration: "MM:SS"
-messages:
-  added:
-    ref_level: "<white>%effect% <blue>%level%<white> Уровня. <gray>(%duration%)"
-    ref: "<white>%effect% <gray>(%duration%)"
-    start_text: "<white>Вы съели <light_purple>%food% <white>:"
-    added_text: "<reset> <white>› Добавлено<blue>: %effect_ref%"
-    disable_start: false
-    disable_notification: false
-  reload: "%prefix% <green>Конфиг перезагружен!"
-  help:
-    - "%prefix% <gray>Команды:"
-    - "<white>/df reload <gray>- Перезагрузить"
-    - "<white>/df help <gray>- Помощь"
-    - "<white>/df version <gray>- Версия"
-  version:
-    - "%prefix% <gray>О плагине:"
-    - " <green>› <gray>Название: <white>{projectName}"
-    - " <green>› <gray>Версия: <white>{projectVersion}"
-    - " <green>› <gray>Автор: <white>{projectAuthors}"
-    - " <gray>Сделано с <red>Любовью<gray> Для вас."
-  errors:
-    effect_disallowed: "%prefix% <red>Эффект %effect% запрещен для этой еды!"
-    global_disallowed: "%prefix% <red>Эффект %effect% запрещен глобально!"
