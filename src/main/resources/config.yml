@@ -1,0 +1,75 @@
+prefix: "<white>dFood »"
+effects:
+  names:
+    SPEED: "Скорость"
+    SLOWNESS: "Замедление"
+    HASTE: "Ускорение"
+    MINING_FATIGUE: "Усталость"
+    STRENGTH: "Сила"
+    INSTANT_HEALTH: "Мгновенное лечение"
+    INSTANT_DAMAGE: "Мгновенный урон"
+    JUMP_BOOST: "Прыжок"
+    NAUSEA: "Тошнота"
+    REGENERATION: "Регенерация"
+    RESISTANCE: "Сопротивление"
+    FIRE_RESISTANCE: "Огнестойкость"
+    WATER_BREATHING: "Подводное дыхание"
+    INVISIBILITY: "Невидимость"
+    BLINDNESS: "Слепота"
+    NIGHT_VISION: "Ночное зрение"
+    HUNGER: "Голод"
+    WEAKNESS: "Слабость"
+    POISON: "Яд"
+    WITHER: "Иссушение"
+    HEALTH_BOOST: "Усиление здоровья"
+    ABSORPTION: "Поглощение"
+    SATURATION: "Насыщение"
+    GLOWING: "Свечение"
+    LEVITATION: "Левитация"
+    LUCK: "Удача"
+    UNLUCK: "Неудача"
+    SLOW_FALLING: "Медленное падение"
+    CONDUIT_POWER: "Сила проводника"
+    DOLPHINS_GRACE: "Грация дельфина"
+    BAD_OMEN: "Дурное предзнаменование"
+    HERO_OF_THE_VILLAGE: "Герой деревни"
+    DARKNESS: "Темнота"
+  disallowed:
+    global:
+      - INSTANT_DAMAGE
+      - BAD_OMEN
+    food:
+      GOLDEN_APPLE:
+        disallowed:
+          - INSTANT_DAMAGE
+          - NAUSEA
+          - BLINDNESS
+refactor:
+  potion_list:
+    ref_level: "<gray>Эффект<blue>: <white>%effect% <blue>%level%<white> Уровня. <gray>(%duration%)"
+    ref: "<gray>Эффект<blue>: <white>%effect% <gray>(%duration%)"
+    rome_math: true
+    ref_duration: "MM:SS"
+messages:
+  added:
+    ref_level: "<white>%effect% <blue>%level%<white> Уровня. <gray>(%duration%)"
+    ref: "<white>%effect% <gray>(%duration%)"
+    start_text: "<white>Вы съели <light_purple>%food% <white>:"
+    added_text: "<reset> <white>› Добавлено<blue>: %effect_ref%"
+    disable_start: false
+    disable_notification: false
+  reload: "%prefix% <green>Конфиг перезагружен!"
+  help:
+    - "%prefix% <gray>Команды:"
+    - "<white>/df reload <gray>- Перезагрузить"
+    - "<white>/df help <gray>- Помощь"
+    - "<white>/df version <gray>- Версия"
+  version:
+    - "%prefix% <gray>О плагине:"
+    - " <green>› <gray>Название: <white>{projectName}"
+    - " <green>› <gray>Версия: <white>{projectVersion}"
+    - " <green>› <gray>Автор: <white>{projectAuthors}"
+    - " <gray>Сделано с <red>Любовью<gray> Для вас."
+  errors:
+    effect_disallowed: "%prefix% <red>Эффект %effect% запрещен для этой еды!"
+    global_disallowed: "%prefix% <red>Эффект %effect% запрещен глобально!"

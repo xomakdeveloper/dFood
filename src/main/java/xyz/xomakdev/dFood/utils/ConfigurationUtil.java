@@ -43,4 +43,12 @@ public class ConfigurationUtil {
         return def != null ? def : Collections.emptyList();
     }
     public static List<Component> getComponentList(String path) { return getComponentList(path, Collections.emptyList()); }
+
+    //tolko dlua plugina, ne standart:
+    public static List<String> getDisallowedEffects(String foodType) {
+        if (foodType == null) {
+            return getStringList("effects.disallowed.global");
+        }
+        return getStringList("effects.disallowed.food." + foodType + ".disallowed");
+    }
 }

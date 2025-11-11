@@ -7,3 +7,24 @@ load: STARTUP
 authors: [xomakdev]
 description: Плагин позволяющий накидывать эффекты зельй на еду
 website: t.me/xomakdev_info
+commands:
+  dfood:
+    description: Основная команда плагина dFood
+    usage: /<command> [reload|help|version]
+    permission: dfood.use
+permissions:
+  dfood.use:
+    description: Доступ к основной команде плагина
+    default: true
+  dfood.reload:
+    description: Перезагрузка конфигурации
+    default: op
+  dfood.help:
+    description: Просмотр помощи
+    default: true
+  dfood.version:
+    description: Просмотр версии плагина
+    default: true
+  dfood.override.full:
+    description: Позволяет есть еду даже при полной сытости
+    default: op
